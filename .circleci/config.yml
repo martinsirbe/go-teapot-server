@@ -17,8 +17,10 @@ jobs:
           name: Build a docker image.
           command: make teapot
       - run:
-          name: Push to the docker image to GitHub package registry.
+          name: Push to the docker registries.
           command: |
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push martinsirbe/go-teapot-server:$(git rev-parse --short $CIRCLE_SHA1)
             echo "$GITHUB_PKG_REG_TOKEN" | docker login docker.pkg.github.com -u "$GITHUB_USERNAME" --password-stdin
             docker push docker.pkg.github.com/martinsirbe/go-teapot-server/go-teapot-server:$(git rev-parse --short $CIRCLE_SHA1)
 workflows:
